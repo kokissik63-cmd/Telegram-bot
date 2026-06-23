@@ -4,7 +4,7 @@ from flask import Flask, request
 from telegram import Update
 from telegram.ext import Application, MessageHandler, ContextTypes, filters
 
-TOKEN = os.environ.get("TOKEN")
+TOKEN = 8825832204:AAHbHrkpybRJBu_HBiotjevPB58J6ZaJ_pA
 GROUP_ID = -1003904422279
 
 app = Flask(__name__)

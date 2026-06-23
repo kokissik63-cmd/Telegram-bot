@@ -1,12 +1,12 @@
 from telegram import Update
-from telegram.ext import Application, MessageHandler, ContextTypes, filters
+from telegram.ext import Updater, MessageHandler, Filters, CallbackContext
 
 TOKEN = "8825832204:AAHbHrkpybRJBu_HBiotjevPB58J6ZaJ_pA"
 GROUP_ID = -1003904422279
 
 msg_to_user = {}
 
-async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
+def handle(update: Update, context: CallbackContext):
     msg = update.message
     if not msg:
         return
@@ -14,7 +14,7 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # ЛС → ГРУППА
     if msg.chat.type == "private":
 
-        forwarded = await context.bot.forward_message(
+        forwarded = context.bot.forward_message(
             chat_id=GROUP_ID,
             from_chat_id=msg.chat_id,
             message_id=msg.message_id
@@ -33,12 +33,15 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
                 user_id = msg_to_user[replied_id]
 
-                await context.bot.send_message(
+                context.bot.send_message(
                     chat_id=user_id,
-                    text=f"💬 Ответ:\n\n{msg.text}"
+                    text="💬 Ответ:\n\n" + msg.text
                 )
 
-app = Application.builder().token(TOKEN).build()
-app.add_handler(MessageHandler(filters.ALL, handle))
+updater = Updater(TOKEN, use_context=True)
+dp = updater.dispatcher
 
-app.run_polling()
+dp.add_handler(MessageHandler(Filters.all, handle))
+
+updater.start_polling()
+updater.idle()
